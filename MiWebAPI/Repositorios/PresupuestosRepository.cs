@@ -118,13 +118,8 @@ class PresupuestoRepository
         return presupuesto;
     }
 
-    public void AgregarProductoCantidadPresupuesto(Producto producto, int cantidad, int idPresupuesto)
+    public void AgregarProductoCantidadPresupuesto(int idProducto, int cantidad, int idPresupuesto)
     {
-        /*ProductosRepository repoProductos = new ProductosRepository();
-        if(ObtenerPresupuestoPorId(idPresupuesto) == null || repoProductos.ObtenerProductoPorId(idProducto) == null)
-        {
-            return false;
-        }*/
         string connectionString = @"Data Source = db/Tienda.db;Cache=Shared";
 
         string query = $"INSERT INTO PresupuestosDetalle (idPresupuesto, idProducto, Cantidad) VALUES (@idPresup, @idProd, @Cantidad)";
@@ -134,7 +129,7 @@ class PresupuestoRepository
             connection.Open();
             SqliteCommand command = new SqliteCommand(query, connection);
             command.Parameters.AddWithValue("@idPresup", idPresupuesto);
-            command.Parameters.AddWithValue("@idProd", producto.IdProducto);
+            command.Parameters.AddWithValue("@idProd", idProducto);
             command.Parameters.AddWithValue("@Cantidad", cantidad);
             command.ExecuteNonQuery();
             connection.Close();

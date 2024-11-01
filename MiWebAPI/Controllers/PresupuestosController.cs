@@ -8,38 +8,53 @@ public class PresupuestosController : ControllerBase
 {
     private readonly ILogger<ProductosController> _logger;
 
-    private ProductoRepository repoProductos;
+    private PresupuestoRepository repoPrsupuestos;
 
     public PresupuestosController(ILogger<ProductosController> logger)
     {
         _logger = logger;
-        repoProductos = new ProductoRepository();
+        repoPrsupuestos = new PresupuestoRepository();
     }
 
-    [HttpPost(" /api/Presupuesto")]
-    public IActionResult CrearProductos(Producto producto)
+    [HttpPost("/api/Presupuesto")]
+    public IActionResult CrearPresupuesto(Presupuesto presupuesto)
     {
-        repoProductos.CrearProducto(producto);
+        repoPrsupuestos.CrearPresupuesto(presupuesto);
         return Created();
     }
 
-    [HttpGet("api/Producto")]
-    public IActionResult ListarProductos()
+    [HttpPost("/api/Presupuesto/{id}/ProductoDetalle")]
+    public IActionResult AgregarProdYCant(int idProducto, int Cant, int presupuestoId)
     {
-        return Ok(repoProductos.ListarProductos());
-    }
 
-    [HttpPut(" /api/Producto/{Id}")]
-    public IActionResult ModificarNombreProducto(int idProd, Producto producto) //Está bien que permita modificar más q el nombre?
-    {
-        var ProductoAModificar = repoProductos.ListarProductos().Find(p => p.IdProducto == idProd);
-        if (ProductoAModificar == null)
+        ProductoRepository repoProductos = new ProductoRepository();;
+        if (repoPrsupuestos.ObtenerPresupuestoPorId(presupuestoId) == null || repoProductos.ObtenerProductoPorId(idProducto) == null)
         {
-            return BadRequest("No se encuentra ningún producto con ese id");
+            return BadRequest("No se encuentra ningún presupuesto con ese id");
         } else
         {
-            repoProductos.ModificarProducto(idProd, producto);
+            repoPrsupuestos.AgregarProductoCantidadPresupuesto(idProducto, Cant, presupuestoId);
             return Ok();
         }
+    }
+
+    [HttpGet("/api/Presupuesto")]
+    public IActionResult ListarPresupuestos()
+    {
+        return Ok(repoPrsupuestos.ListarPresupuestos());
+    }
+
+    [HttpGet("api/Presupuestos/{id}")]
+    public ActionResult<Presupuesto> GetPresupuestoPorId(int id)
+    {
+        return Ok(repoPrsupuestos.ObtenerPresupuestoPorId(id));
+    }
+
+    [HttpDelete]
+
+    public IActionResult BorrarPresupuesto(int id)
+    {
+        repoPrsupuestos.EliminarpresupuestoPorId(id);
+        return Ok();
     }
 }

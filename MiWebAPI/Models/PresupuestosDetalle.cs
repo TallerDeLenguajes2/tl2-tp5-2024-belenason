@@ -1,5 +1,5 @@
 
-class PresupuestosDetalle
+public class PresupuestosDetalle
 {
     public Producto Producto;
     public int Cantidad;

@@ -1,4 +1,4 @@
-class Presupuesto
+public class Presupuesto
 {
     public int IdPresupuesto {get; set;}
     public string NombreDestinatario {get; set;}
