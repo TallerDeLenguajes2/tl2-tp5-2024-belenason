@@ -1,13 +1,24 @@
-class Presupuestos
+class Presupuesto
 {
     public int IdPresupuesto {get; set;}
     public string NombreDestinatario {get; set;}
     public List<PresupuestosDetalle> Detalle {get; set;}
-    
-    public Presupuestos(string nombreDest, List<PresupuestosDetalle> detalle)
+    public DateTime FechaCreacion { get; set; }
+
+    public Presupuesto(int idPresupuesto, string nombreDest, DateTime fecha)
     {
+        this.IdPresupuesto = idPresupuesto;
+        this.NombreDestinatario = nombreDest;
+        this.Detalle = new List<PresupuestosDetalle> ();
+        this.FechaCreacion = fecha;
+    }
+    
+    public Presupuesto(int idPresupuesto, string nombreDest, DateTime fecha, List<PresupuestosDetalle> detalle)
+    {
+        this.IdPresupuesto = idPresupuesto;
         this.NombreDestinatario = nombreDest;
         this.Detalle = detalle;
+        this.FechaCreacion = fecha;
     }
 
     public double MontoPresupuesto()
