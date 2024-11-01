@@ -29,16 +29,16 @@ public class ProductosController : ControllerBase
         return Ok(repoProductos.ListarProductos());
     }
 
-    [HttpPut(" /api/Producto/{Id}")]
-    public IActionResult ModificarNombreProducto(int idProd, Producto producto) //Está bien que permita modificar más q el nombre?
+    [HttpPut("/api/Producto/{Id}")]
+    public IActionResult ModificarNombreProducto(int Id, Producto producto) //Está bien que permita modificar más q el nombre?
     {
-        var ProductoAModificar = repoProductos.ListarProductos().Find(p => p.IdProducto == idProd);
+        var ProductoAModificar = repoProductos.ListarProductos().Find(p => p.IdProducto == Id);
         if (ProductoAModificar == null)
         {
             return BadRequest("No se encuentra ningún producto con ese id");
         } else
         {
-            repoProductos.ModificarProducto(idProd, producto);
+            repoProductos.ModificarProducto(Id, producto);
             return Ok();
         }
     }

@@ -5,12 +5,16 @@ public class Presupuesto
     public List<PresupuestosDetalle> Detalle {get; set;}
     public DateTime FechaCreacion { get; set; }
 
-    public Presupuesto(int idPresupuesto, string nombreDest, DateTime fecha)
+    public Presupuesto(int idPresupuesto, string nombreDestinatario, DateTime fechaCreacion)
     {
         this.IdPresupuesto = idPresupuesto;
-        this.NombreDestinatario = nombreDest;
+        this.NombreDestinatario = nombreDestinatario;
         this.Detalle = new List<PresupuestosDetalle> ();
-        this.FechaCreacion = fecha;
+        this.FechaCreacion = fechaCreacion;
+    }
+    public Presupuesto() 
+    {
+        this.Detalle = new List<PresupuestosDetalle>();
     }
     
     public Presupuesto(int idPresupuesto, string nombreDest, DateTime fecha, List<PresupuestosDetalle> detalle)

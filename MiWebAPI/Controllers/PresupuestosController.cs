@@ -24,16 +24,16 @@ public class PresupuestosController : ControllerBase
     }
 
     [HttpPost("/api/Presupuesto/{id}/ProductoDetalle")]
-    public IActionResult AgregarProdYCant(int idProducto, int Cant, int presupuestoId)
+    public IActionResult AgregarProdYCant(int idProducto, int Cant, int id)
     {
 
         ProductoRepository repoProductos = new ProductoRepository();;
-        if (repoPrsupuestos.ObtenerPresupuestoPorId(presupuestoId) == null || repoProductos.ObtenerProductoPorId(idProducto) == null)
+        if (repoPrsupuestos.ObtenerPresupuestoPorId(id) == null || repoProductos.ObtenerProductoPorId(idProducto) == null)
         {
             return BadRequest("No se encuentra ningún presupuesto con ese id");
         } else
         {
-            repoPrsupuestos.AgregarProductoCantidadPresupuesto(idProducto, Cant, presupuestoId);
+            repoPrsupuestos.AgregarProductoCantidadPresupuesto(idProducto, Cant, id);
             return Ok();
         }
     }
@@ -47,7 +47,14 @@ public class PresupuestosController : ControllerBase
     [HttpGet("api/Presupuestos/{id}")]
     public ActionResult<Presupuesto> GetPresupuestoPorId(int id)
     {
-        return Ok(repoPrsupuestos.ObtenerPresupuestoPorId(id));
+        Presupuesto obtenido = repoPrsupuestos.ObtenerPresupuestoPorId(id);
+        if (obtenido == null)
+        {
+            return BadRequest("No se encuentra ningún presupuesto con ese id");
+        } else
+        {
+            return Ok(obtenido);
+        }
     }
 
     [HttpDelete]

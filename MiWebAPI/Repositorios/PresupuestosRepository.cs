@@ -21,9 +21,7 @@ class PresupuestoRepository
 
     public List<Presupuesto> ListarPresupuestos()
     {
-
         List<Presupuesto> presupuestos = new List<Presupuesto>();
-
         string connectionString = @"Data Source = db/Tienda.db;Cache=Shared";
 
         string query = @"SELECT 
@@ -36,9 +34,9 @@ class PresupuestoRepository
             PD.Cantidad
         FROM 
             Presupuestos P
-        JOIN 
+        LEFT JOIN 
             PresupuestosDetalle PD ON P.idPresupuesto = PD.idPresupuesto
-        JOIN 
+        LEFT JOIN 
             Productos PR ON PD.idProducto = PR.idProducto
         ORDER BY P.idPresupuesto;";
 
@@ -49,22 +47,36 @@ class PresupuestoRepository
 
             using (SqliteDataReader reader = command.ExecuteReader())
             {
-                //connection.Close();
                 int id = -1; 
                 Presupuesto ultPresupuesto = null;
+
                 while (reader.Read())
                 {
-                    if(id == -1 || id != Convert.ToInt32(reader["idPresupuesto"]))
+                    if (id == -1 || id != Convert.ToInt32(reader["idPresupuesto"]))
                     {
                         if (id != -1) presupuestos.Add(ultPresupuesto);
-                        ultPresupuesto = new Presupuesto(Convert.ToInt32(reader["idPresupuesto"]), reader["NombreDestinatario"].ToString(), Convert.ToDateTime(reader["FechaCreacion"]));
+                        
+                        ultPresupuesto = new Presupuesto(
+                            Convert.ToInt32(reader["idPresupuesto"]),
+                            reader["NombreDestinatario"].ToString(),
+                            Convert.ToDateTime(reader["FechaCreacion"])
+                        );
                     }
-                    Producto producto = new Producto(Convert.ToInt32(reader["idProducto"]), reader["Producto"].ToString(), Convert.ToInt32(reader["Precio"]));
-                    PresupuestosDetalle detalle = new PresupuestosDetalle(producto,Convert.ToInt32(reader["Cantidad"]) );
-                    ultPresupuesto.Detalle.Add(detalle);
+
+                    // Manejo de posibles valores NULL en Producto y Detalle
+                    if (reader["idProducto"] != DBNull.Value && reader["Producto"] != DBNull.Value && reader["Precio"] != DBNull.Value && reader["Cantidad"] != DBNull.Value)
+                    {
+                        Producto producto = new Producto(Convert.ToInt32(reader["idProducto"]), reader["Producto"].ToString(), Convert.ToInt32(reader["Precio"]));
+
+                        PresupuestosDetalle detalle = new PresupuestosDetalle(producto, Convert.ToInt32(reader["Cantidad"]));
+
+                        ultPresupuesto.Detalle.Add(detalle);
+                    }
+
                     id = Convert.ToInt32(reader["idPresupuesto"]);
                 }
-                presupuestos.Add(ultPresupuesto);
+
+                if (ultPresupuesto != null) presupuestos.Add(ultPresupuesto);
             }
             connection.Close();
         }
@@ -122,7 +134,7 @@ class PresupuestoRepository
     {
         string connectionString = @"Data Source = db/Tienda.db;Cache=Shared";
 
-        string query = $"INSERT INTO PresupuestosDetalle (idPresupuesto, idProducto, Cantidad) VALUES (@idPresup, @idProd, @Cantidad)";
+        string query = $"INSERT INTO PresupuestosDetalle (idPresupuesto, idProducto, Cantidad) VALUES (@idPresup, @idProd, @Cantidad) ON CONFLICT(idPresupuesto, idProducto) DO UPDATE SET Cantidad = Cantidad + @Cantidad;";
 
         using (SqliteConnection connection = new SqliteConnection(connectionString))
         {

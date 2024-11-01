@@ -32,7 +32,7 @@ class ProductoRepository
 
             command.Parameters.AddWithValue("@idProducto", idProducto);
             command.Parameters.AddWithValue("@Precio", producto.Precio);
-            command.Parameters.AddWithValue("@Descriipcion", producto.Descripcion);
+            command.Parameters.AddWithValue("@Descripcion", producto.Descripcion);
 
             command.ExecuteNonQuery();
             connection.Close();
